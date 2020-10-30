@@ -1,0 +1,25 @@
+# Código para poder unir varios excel ubicados en una misma carpeta
+
+setwd("E:/historico ep")#Setear la ubicación de la carpeta donde se encuentran los excel
+#install.packages("pacman")#paquete que permite llamar paquetes de forma más rápida
+library(pacman)
+p_load(reshape2,readxl,lubridate,openxlsx,dplyr,tidyverse,stringr)
+
+# Creamos una lista donde se almacenan toda la información con la misma estructura
+datos <- list()    
+i <- 1 #Contador inicia en 1
+
+# Recurrencia para leer todos los archivos excel y colocarlos en una sola lista
+for (file in list.files(pattern='*.xlsx')) {
+  
+  datos[[i]] <- read_excel(file)
+  # datos[[i]] <- datos[[i]][-(11:44),-c(1,3,16,17,18,19,20)]
+  # fecha <- as.Date(rep("2019-09-01",10)) + (i - 1)
+  datos[[i]] <-cbind(datos[[i]])
+  
+  i <- i + 1
+}
+
+#Función que permite crear un data frame con todas las listas individuales, union
+total <- do.call(rbind,datos)
+write.xlsx(total,file="Todos.xlsx") #exportar a un excel el resultado
